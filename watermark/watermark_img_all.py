@@ -47,9 +47,9 @@ def batch_watermark(
             add_watermark(input_path, watermark_path, output_path, watermark_scale)
 
 def main():
-    input_folder = "/home/heirenlop/workspace/my_repo/heirenlop.github.io/static/images/work-record"         # 你的原图文件夹
+    input_folder = "/home/heirenlop/workspace/python-tools/watermark_input_folder"         # 输入文件夹
     watermark_path = "watermark.png"         # 水印图
-    output_folder = "./output_images1" # 输出文件夹
+    output_folder = "/home/heirenlop/workspace/python-tools/watermark_output_folder" # 输出文件夹
 
     batch_watermark(input_folder, watermark_path, output_folder, watermark_scale=0.12)
 
