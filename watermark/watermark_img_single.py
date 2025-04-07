@@ -28,7 +28,7 @@ def add_watermark(
     new_wm_height = int(new_wm_width * aspect_ratio)
 
     # 缩放水印
-    watermark_resized = watermark.resize((new_wm_width, new_wm_height), Image.ANTIALIAS)
+    watermark_resized = watermark.resize((new_wm_width, new_wm_height), Image.Resampling.LANCZOS)
 
     # 计算水印要贴到的位置（右下角）
     position_x = base_width - new_wm_width - 10  # 右边留 10 像素边距
@@ -48,9 +48,9 @@ def add_watermark(
 
 def main():
     # 在这里修改需要的文件路径
-    input_path = "/home/heirenlop/workspace/my_repo/heirenlop.github.io/static/images/work-record/Peek_MonoGS_camera_1080P.gif"        # 原图
+    input_path = "./changchun1.jpg"        # 原图
     watermark_path = "watermark.png"  # 水印图（建议带透明通道）
-    output_path = "./output8.gif"      # 输出图
+    output_path = "./changchun1.png"      # 输出图
 
     # 水印缩放比例 (相对于原图宽度)
     add_watermark(input_path, watermark_path, output_path, watermark_scale=0.2)

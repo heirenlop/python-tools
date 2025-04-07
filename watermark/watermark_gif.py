@@ -30,9 +30,9 @@ def add_watermark_to_gif(
     print(f"✅ GIF 处理完成: {output_gif_path}")
 
 def main():
-    input_gif = "/home/heirenlop/workspace/my_repo/heirenlop.github.io/static/images/work-record/Peek_MonoGS_camera_1080P.gif"       # 原始 GIF 路径
+    input_gif = "./weihai3.gif"       # 原始 GIF 路径
     watermark = "./watermark.png"   # 水印图路径
-    output_gif = "./output.gif"     # 输出 GIF 路径
+    output_gif = "./output3.gif"     # 输出 GIF 路径
 
     add_watermark_to_gif(input_gif, watermark, output_gif, watermark_scale=0.12)
 
