@@ -17,7 +17,11 @@ def add_watermark(
     aspect_ratio = wm_height / wm_width
     new_wm_height = int(new_wm_width * aspect_ratio)
 
-    watermark_resized = watermark.resize((new_wm_width, new_wm_height), Image.ANTIALIAS)
+    # ✅ 修改这里
+    watermark_resized = watermark.resize(
+        (new_wm_width, new_wm_height), 
+        resample=Image.Resampling.LANCZOS
+    )
 
     position_x = base_width - new_wm_width - 10
     position_y = base_height - new_wm_height - 10
@@ -47,9 +51,9 @@ def batch_watermark(
             add_watermark(input_path, watermark_path, output_path, watermark_scale)
 
 def main():
-    input_folder = "/home/heirenlop/workspace/python-tools/watermark_input_folder"         # 输入文件夹
-    watermark_path = "watermark.png"         # 水印图
-    output_folder = "/home/heirenlop/workspace/python-tools/watermark_output_folder" # 输出文件夹
+    input_folder = "/home/heirenlop/workspace/python-tools/watermark/input"         # 输入文件夹
+    watermark_path = "/home/heirenlop/workspace/python-tools/watermark/watermark.png" # 水印图
+    output_folder = "/home/heirenlop/workspace/python-tools/watermark/output"         # 输出文件夹
 
     batch_watermark(input_folder, watermark_path, output_folder, watermark_scale=0.12)
 
