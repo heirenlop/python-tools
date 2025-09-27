@@ -1,0 +1,7 @@
+ffmpeg -y -i 思念.MOV \
+  -c:v libx264 -crf 24 -preset slow \
+  -vf scale=1920:-1 \
+  -c:a aac -b:a 128k \
+  -pix_fmt yuv420p \
+  video1_compressed_v2.mp4
+

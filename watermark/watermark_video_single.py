@@ -29,7 +29,7 @@ def add_watermark_to_video(
     print(f"✅ 视频处理完成: {output_video_path}")
 
 def main():
-    input_video = "./maanshan1.mp4"       # 原始视频路径
+    input_video = "./haerbin6.mp4"       # 原始视频路径
     watermark = "./watermark.png"              # 水印图路径（PNG，最好带透明）
     output_video = "./sample_watermarked.mp4"  # 输出路径
 

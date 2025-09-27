@@ -1,61 +1,62 @@
 import os
-from PIL import Image
+from moviepy.editor import VideoFileClip, ImageClip, CompositeVideoClip
 
-def add_watermark(
-    input_image_path, 
-    watermark_image_path, 
-    output_image_path, 
-    watermark_scale=0.2
-):
-    base_image = Image.open(input_image_path).convert("RGBA")
-    watermark = Image.open(watermark_image_path).convert("RGBA")
-
-    base_width, base_height = base_image.size
-    wm_width, wm_height = watermark.size
-
-    new_wm_width = int(base_width * watermark_scale)
-    aspect_ratio = wm_height / wm_width
-    new_wm_height = int(new_wm_width * aspect_ratio)
-
-    # ✅ 修改这里
-    watermark_resized = watermark.resize(
-        (new_wm_width, new_wm_height), 
-        resample=Image.Resampling.LANCZOS
-    )
-
-    position_x = base_width - new_wm_width - 10
-    position_y = base_height - new_wm_height - 10
-
-    layer = Image.new("RGBA", base_image.size, (0, 0, 0, 0))
-    layer.paste(watermark_resized, (position_x, position_y))
-
-    watermarked_image = Image.alpha_composite(base_image, layer)
-    watermarked_image = watermarked_image.convert("RGB")
-    watermarked_image.save(output_image_path, quality=95)
-    print(f"✅ 已添加水印: {output_image_path}")
-
-def batch_watermark(
-    input_folder, 
-    watermark_path, 
-    output_folder, 
+def add_watermark_to_video(
+    input_video_path,
+    watermark_image_path,
+    output_video_path,
     watermark_scale=0.12
 ):
+    video = VideoFileClip(input_video_path)
+    video_w, video_h = video.size
+
+    # 加载水印图并设置持续时间
+    watermark = ImageClip(watermark_image_path).set_duration(video.duration)
+    wm_width = int(video_w * watermark_scale)
+    aspect_ratio = watermark.h / watermark.w
+    wm_height = int(wm_width * aspect_ratio)
+    watermark = watermark.resize(newsize=(wm_width, wm_height))
+
+    # 设置右下角位置
+    position = (video_w - wm_width - 10, video_h - wm_height - 10)
+    watermark = watermark.set_pos(position)
+
+    # 合成视频并导出（CRF 模式，保证画质）
+    final = CompositeVideoClip([video, watermark])
+    final.write_videofile(
+        output_video_path,
+        codec="libx264",
+        audio_codec="aac",
+        preset="slow",                          # 压缩更优，画质好
+        ffmpeg_params=["-crf", "18", "-pix_fmt", "yuv420p"],  # CRF 控制质量
+        audio_bitrate="192k",
+        threads=4,
+        logger=None  # 静默输出，可改为"bar"
+    )
+    print(f"✅ 已添加水印: {output_video_path}")
+
+def batch_watermark_videos(input_folder, watermark_path, output_folder, watermark_scale=0.12):
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
-    supported_ext = (".jpg", ".jpeg", ".png")
-    for filename in os.listdir(input_folder):
-        if filename.lower().endswith(supported_ext):
-            input_path = os.path.join(input_folder, filename)
-            output_path = os.path.join(output_folder, filename)
-            add_watermark(input_path, watermark_path, output_path, watermark_scale)
+    for root, _, files in os.walk(input_folder):
+        for file in files:
+            if file.lower().endswith(".mp4"):
+                input_path = os.path.join(root, file)
+                # 保留子目录结构
+                relative_path = os.path.relpath(root, input_folder)
+                output_dir = os.path.join(output_folder, relative_path)
+                os.makedirs(output_dir, exist_ok=True)
+                output_path = os.path.join(output_dir, file)
+                add_watermark_to_video(input_path, watermark_path, output_path, watermark_scale)
 
 def main():
-    input_folder = "/home/heirenlop/workspace/python-tools/watermark/input"         # 输入文件夹
-    watermark_path = "/home/heirenlop/workspace/python-tools/watermark/watermark.png" # 水印图
-    output_folder = "/home/heirenlop/workspace/python-tools/watermark/output"         # 输出文件夹
+    input_folder = "/home/heirenlop/workspace/python-tools/watermark/input"
+    watermark_path = "/home/heirenlop/workspace/python-tools/watermark/watermark.png"
+    output_folder = "/home/heirenlop/workspace/python-tools/watermark/output"
 
-    batch_watermark(input_folder, watermark_path, output_folder, watermark_scale=0.12)
+    batch_watermark_videos(input_folder, watermark_path, output_folder, watermark_scale=0.12)
 
 if __name__ == "__main__":
     main()
+
