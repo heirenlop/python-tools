@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# 设置搜索目录（可以传参数，也可以修改这里）
+TARGET_DIR="/home/heirenlop/workspace/heirenlop.github.io/content"  # 请修改为你的实际目录
+
+# 要替换的旧 URL 和新 URL
+OLD_URL="https://pub-5b6dc435fbf3499ca474b4b6941cb647.r2.dev/"
+NEW_URL="https://cdn-v.heirenlop.com/"
+
+# 遍历所有 .html 和 .md 文件
+find "$TARGET_DIR" -type f \( -name "*.html" -o -name "*.md" \) | while read -r file; do
+  echo "🔁 替换文件: $file"
+  sed -i "s|$OLD_URL|$NEW_URL|g" "$file"
+done
+
+echo "✅ 全部替换完成。"
+
